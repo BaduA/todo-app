@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/guards/jwt.guard';
-import { PrismaModule } from './prisma/prisma.module';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { JwtRefreshAuthGuard } from './auth/guards/jwt.refresh.guard';
-import { DutyModule } from './duty/duty.module';
-import { CaslModule } from './casl/casl.module';
-import { PoliciesGuard } from './auth/guards/policy.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
+import { DutyModule } from './modules/duty/duty.module';
+import { RolesGuard } from './guards/role.guard';
 
 @Module({
   imports: [
@@ -21,7 +19,6 @@ import { PoliciesGuard } from './auth/guards/policy.guard';
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(),
     DutyModule,
-    CaslModule
   ],
   controllers: [AppController],
   providers: [
@@ -29,6 +26,10 @@ import { PoliciesGuard } from './auth/guards/policy.guard';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     {
       provide: APP_GUARD,
