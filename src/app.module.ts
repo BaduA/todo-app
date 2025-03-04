@@ -5,11 +5,13 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
-import { RolesGuard } from './auth/guards/role.guard';
 import { PrismaModule } from './prisma/prisma.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { JwtRefreshAuthGuard } from './auth/guards/jwt.refresh.guard';
+import { DutyModule } from './duty/duty.module';
+import { CaslModule } from './casl/casl.module';
+import { PoliciesGuard } from './auth/guards/policy.guard';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { JwtRefreshAuthGuard } from './auth/guards/jwt.refresh.guard';
     PrismaModule,
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(),
+    DutyModule,
+    CaslModule
   ],
   controllers: [AppController],
   providers: [
@@ -25,14 +29,6 @@ import { JwtRefreshAuthGuard } from './auth/guards/jwt.refresh.guard';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: JwtRefreshAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
     },
     {
       provide: APP_GUARD,

@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  InternalServerErrorException,
   Post,
   Req,
   UnauthorizedException,
@@ -28,11 +27,11 @@ export class AuthController {
   }
   @Post('register')
   @Public()
-  async register(@Body() dto:RegisterDTO) {
+  async register(@Body() dto: RegisterDTO) {
     return this.authService.register(dto);
   }
 
-  @Get('profile')
+  @Get('me')
   getProfile(@Req() req) {
     return req.user;
   }
@@ -41,7 +40,6 @@ export class AuthController {
     short: { limit: 1, ttl: 1000 },
     long: { limit: 2, ttl: 60000 },
   })
-  @Public()
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-tokens')
   refreshTokens(@Req() req: Request) {
