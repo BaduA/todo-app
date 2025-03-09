@@ -1,19 +1,25 @@
 import { Body, Injectable } from '@nestjs/common';
-import { CreateDutyDTO } from './dto/create.duty.dto';
-import { UpdateBodyDTO } from './dto/update.duty.dto';
+import { CreateDutyDTOService, CreateDutyDTOUser } from './dto/create.duty.dto';
+import { UpdateBodyDTO, UpdateBodyModDTOService } from './dto/update.duty.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class DutyService {
   constructor(private prisma: PrismaService) {}
 
-  async createDuty(dto: CreateDutyDTO) {
-    return await this.prisma.duty.create({ data: dto });
+  async createDuty(dto: CreateDutyDTOService) {
+    console.log(dto)
+    var count = (
+      await this.prisma.duty.findMany({ where: { status: dto.status } })
+    ).length;
+    return await this.prisma.duty.create({
+      data: { ...dto, orderInColumn: count },
+    });
   }
   async deleteDuty(id: number) {
     return await this.prisma.duty.delete({ where: { id } });
   }
-  async updateDuty(id: number, dto: UpdateBodyDTO) {
+  async updateDuty(id: number, dto: UpdateBodyModDTOService | UpdateBodyDTO) {
     return await this.prisma.duty.update({
       where: { id },
       data: dto,
@@ -23,7 +29,19 @@ export class DutyService {
     return await this.prisma.duty.findMany({
       where: { userId },
       orderBy: {
-        priority: 'asc',
+        orderInColumn: 'asc',
+      },
+    });
+  }
+  async getUsersDutiesUsername(username: string) {
+    return await this.prisma.duty.findMany({
+      where: {
+        assignedTo: {
+          username,
+        },
+      },
+      orderBy: {
+        orderInColumn: 'asc',
       },
     });
   }

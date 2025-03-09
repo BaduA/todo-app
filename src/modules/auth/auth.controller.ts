@@ -4,17 +4,19 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from 'src/decorators/public.decorator';
 import { Throttle } from '@nestjs/throttler';
 import { RegisterDTO } from './dto/register.dto';
 import { LocalAuthGuard } from 'src/guards/local.guard';
 import { JwtRefreshAuthGuard } from 'src/guards/jwt.refresh.guard';
+import { cookieConfig, extractRefreshTokenFromCookies } from 'src/utils/cookie';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +24,8 @@ export class AuthController {
   @Post('login')
   @Public()
   @UseGuards(LocalAuthGuard)
-  async login(@Req() req: Request) {
-    return this.authService.login(req.user);
+  async login(@Req() req: Request, @Res() res: Response) {
+    return this.authService.login(req.user, res);
   }
   @Post('register')
   @Public()
@@ -42,14 +44,20 @@ export class AuthController {
   })
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh-tokens')
-  refreshTokens(@Req() req: Request) {
+  refreshTokens(@Req() req: Request, res: Response) {
     if (!req.user) {
       throw new UnauthorizedException();
     }
     return this.authService.generateTokenPair(
       (req.user as any).attributes,
-      req.headers.authorization?.split(' ')[1],
+      res,
+      extractRefreshTokenFromCookies(req) as string,
       (req.user as any).refreshTokenExpiresAt,
     );
+  }
+  @Public()
+  @Post('clear-auth-cookie')
+  clearAuthCookie(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie(cookieConfig.refreshToken.name);
   }
 }

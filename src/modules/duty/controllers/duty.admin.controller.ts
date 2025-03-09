@@ -9,7 +9,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CreateDutyDTO } from '../dto/create.duty.dto';
+import { CreateDutyDTOService } from '../dto/create.duty.dto';
 import { DutyService } from '../duty.service';
 import { Role } from '@prisma/client';
 import { UpdateBodyDTO } from '../dto/update.duty.dto';
@@ -20,7 +20,7 @@ export class DutyAdminController {
   constructor(private dutyService: DutyService) {}
   @Post()
   @Roles(Role.ADMIN)
-  async createDuty(@Req() req, @Body() dto: CreateDutyDTO) {
+  async createDuty(@Req() req, @Body() dto: CreateDutyDTOService) {
     return await this.dutyService.createDuty(dto);
   }
   @Delete(':id')

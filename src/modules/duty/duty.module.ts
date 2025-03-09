@@ -2,12 +2,11 @@ import { Module } from '@nestjs/common';
 import { DutyController } from './controllers/duty.controller';
 import { DutyService } from './duty.service';
 import { PrismaModule } from '../prisma/prisma.module';
-import { DutyAdminController } from './controllers/duty.admin.controller';
-import { DutyModController } from './controllers/duty.mod.controller';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [PrismaModule],
-  controllers: [DutyController, DutyAdminController, DutyModController],
+  imports: [PrismaModule, UsersModule],
+  controllers: [DutyController],
   providers: [DutyService],
 })
 export class DutyModule {}

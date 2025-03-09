@@ -14,15 +14,27 @@ import { IsEmpty, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 // }
 
 export class UpdateBodyDTO {
-  @IsEmpty()
   title: string;
-  @IsEmpty()
   description: string;
-  @IsUUID()
-  @IsEmpty()
-  userId: string;
-  @IsEmpty()
   priority: Priority;
-  @IsEmpty()
   status: Status;
+  orderInColumn: number;
+}
+export class UpdateBodyModDTOService {
+  title: string;
+  description: string;
+  @IsNotEmpty()
+  userId: string;
+  priority: Priority;
+  status: Status;
+  orderInColumn: number;
+}
+export class UpdateBodyModDTOController {
+  title: string;
+  description: string;
+  @IsNotEmpty()
+  username: string;
+  priority: Priority;
+  status: Status;
+  orderInColumn: number;
 }

@@ -15,7 +15,7 @@ import { JwtRefreshStrategy } from 'src/strategies/jwt.refresh.strategy';
     PassportModule,
     JwtModule.register({
       secret: 'SECRET',
-      signOptions: { expiresIn: '15d' },
+      signOptions: { expiresIn: '15m' },
     }),
     PrismaModule,
   ],
